@@ -61,7 +61,7 @@ public class ProductService {
     /**
      * Exclui um produto pelo "ID".
      */
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         productRepository.deleteById(id);
     }
 
