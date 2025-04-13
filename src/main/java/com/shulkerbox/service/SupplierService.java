@@ -1,6 +1,5 @@
 package com.shulkerbox.service;
 
-
 import com.shulkerbox.model.Supplier;
 import com.shulkerbox.repository.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +23,20 @@ public class SupplierService {
 
     /**
      * Busca um fornecedor pelo "ID".
-     * Retorna null se o fornecedor não for encontrado.
+     * Retorna o fornecedor ou null se não encontrado.
+     * @deprecated Prefira usar findByIdOptional() para melhor tratamento de valores nulos
      */
-    public Supplier findById(Long id){
-        Optional<Supplier> supplier =   supplierRepository.findById(id);
-        return supplier.orElse(null);
+    @Deprecated
+    public Supplier findById(Long id) {
+        return supplierRepository.findById(id).orElse(null);
+    }
+
+    /**
+     * Busca um fornecedor pelo "ID" retornando um Optional.
+     * Método preferido para evitar NullPointerException.
+     */
+    public Optional<Supplier> findByIdOptional(Long id) {
+        return supplierRepository.findById(id);
     }
 
     /**
@@ -41,7 +49,14 @@ public class SupplierService {
     /**
      * Exclui um fornecedor pelo ID.
      */
-    public void deleteById(Long id){
+    public void deleteById(Long id) {
         supplierRepository.deleteById(id);
+    }
+
+    /**
+     * Verifica se um fornecedor existe pelo ID.
+     */
+    public boolean existsById(Long id) {
+        return supplierRepository.existsById(id);
     }
 }

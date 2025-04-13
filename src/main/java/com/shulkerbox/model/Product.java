@@ -1,7 +1,11 @@
 package com.shulkerbox.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Entidade que representa um produto no sistema.
@@ -9,6 +13,9 @@ import lombok.Data;
  */
 @Data // Anotação do Lombok para gerar getters, setters, toString, equals e hashCode automaticamente.
 @Entity // Indica que esta classe é uma entidade JPA.
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "products") // Define o nome da tabela no banco de dados.
 public class Product {
 
@@ -40,7 +47,7 @@ public class Product {
 
     @ManyToOne // Define o relacionamento muitos-para-um.
     @JoinColumn(name = "category_id", nullable = false) // Define a coluna de relacionamento no banco de dados.
-    private Category categoryId;
+    private Category category;
 
     @Column(nullable = false) // Define que a coluna no banco de dados não pode ser nula.
     private Integer quantityStock;
@@ -53,7 +60,7 @@ public class Product {
 
     @ManyToOne // Define o relacionamento muitos-para-um.
     @JoinColumn(name = "supplier_id", nullable = false) // Define a coluna de relacionamento no banco de dados.
-    private Supplier supplierId;
+    private Supplier supplier;
 
 }
 

@@ -2,6 +2,7 @@ package com.shulkerbox.service;
 
 import com.shulkerbox.model.Product;
 import com.shulkerbox.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,9 +51,9 @@ public class ProductService {
             existingProduct.setName(updatedProduct.getName());
             existingProduct.setDescription(updatedProduct.getDescription());
             existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setCategoryId(updatedProduct.getCategoryId());
+            existingProduct.setCategory(updatedProduct.getCategory());
             existingProduct.setQuantityStock(updatedProduct.getQuantityStock());
-            existingProduct.setSupplierId(updatedProduct.getSupplierId());
+            existingProduct.setSupplier(updatedProduct.getSupplier());
             return productRepository.save(existingProduct);
         }
         return null; // Retorna null se o produto não existir.
@@ -61,19 +62,23 @@ public class ProductService {
     /**
      * Exclui um produto pelo "ID".
      */
-    public void deleteById(Long id) {
-        productRepository.deleteById(id);
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com ID: " + id));
+
+        productRepository.delete(product);
     }
+
+
 
     /**
      * Atualiza a quantidade em estoque de um produto.
      */
     public Product updateStock(Long id, Integer newQuantityStock) {
-        Product existingProduct = searchById(id);
-        if(existingProduct != null) {
-            existingProduct.setQuantityStock(newQuantityStock);
-            return productRepository.save(existingProduct);
-        }
-        return null; // Retorna null se o produto não existir.
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com ID: " + id));
+
+        existingProduct.setQuantityStock(newQuantityStock);
+        return productRepository.save(existingProduct);
     }
 }

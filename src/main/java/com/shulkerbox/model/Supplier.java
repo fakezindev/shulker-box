@@ -45,4 +45,5 @@ public class Supplier {
 
     @Column(nullable = false) // Define que a coluna no banco de dados não pode ser nula.
     private String telefone;
+
 }
