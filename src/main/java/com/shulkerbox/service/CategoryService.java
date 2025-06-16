@@ -2,6 +2,7 @@ package com.shulkerbox.service;
 
 import com.shulkerbox.model.Category;
 import com.shulkerbox.repository.CategoryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,19 @@ public class CategoryService {
      */
     public Category save(Category category) {
         return categoryRepository.save(category);
+    }
+
+    // Atualizar categoria existente
+    public Category update(Long id, Category updatedCategory) {
+        // Busca a categoria existente pelo ID
+        return categoryRepository.findById(id)
+                .map(existingCategory -> {
+                    // Atualiza apenas o nome (ou outros campos se houver)
+                    existingCategory.setName(updatedCategory.getName());
+                    // Salva a categoria atualizada
+                    return categoryRepository.save(existingCategory);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada com ID: " + id)); // Lança exceção se não encontrar
     }
 
     /**

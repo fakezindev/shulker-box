@@ -22,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor // Lombok gera o construtor com as dependências
 public class ProductController {
 
@@ -48,6 +49,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductRequestDTO dto) {
         try {
+
             // Verifica e obtém a categoria
             Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new ResponseStatusException(
@@ -80,8 +82,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.update(id, product);
+    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody ProductRequestDTO dto) {
+        Product updatedProduct = productService.update(id, dto);
         return updatedProduct != null ?
                 ResponseEntity.ok(updatedProduct) :
                 ResponseEntity.notFound().build();

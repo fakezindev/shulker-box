@@ -1,6 +1,5 @@
 package com.shulkerbox.model;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,7 +61,7 @@ public class Product {
     @JoinColumn(name = "supplier_id", nullable = false) // Define a coluna de relacionamento no banco de dados.
     private Supplier supplier;
 
-}
+   }
 
 
 

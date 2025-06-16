@@ -2,6 +2,7 @@ package com.shulkerbox.service;
 
 import com.shulkerbox.model.Supplier;
 import com.shulkerbox.repository.SupplierRepository;
+import jakarta.persistence.EntityNotFoundException; // Importar
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,10 @@ public class SupplierService {
      * Exclui um fornecedor pelo ID.
      */
     public void deleteById(Long id) {
+        // Adicionando verificação se o fornecedor existe antes de tentar excluir
+        if (!supplierRepository.existsById(id)) {
+            throw new EntityNotFoundException("Fornecedor não encontrado com ID: " + id);
+        }
         supplierRepository.deleteById(id);
     }
 
@@ -58,5 +63,21 @@ public class SupplierService {
      */
     public boolean existsById(Long id) {
         return supplierRepository.existsById(id);
+    }
+
+    /**
+     * Atualiza um fornecedor existente.
+     * Adicione este método se ainda não tiver um para PUT.
+     */
+    public Supplier update(Long id, Supplier updatedSupplier) {
+        return supplierRepository.findById(id)
+                .map(existingSupplier -> {
+                    existingSupplier.setName(updatedSupplier.getName());
+                    existingSupplier.setCnpj(updatedSupplier.getCnpj());
+                    existingSupplier.setTelefone(updatedSupplier.getTelefone());
+                    existingSupplier.setEmail(updatedSupplier.getEmail()); // NOVO: Atualiza o campo email
+                    return supplierRepository.save(existingSupplier);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Fornecedor não encontrado com ID: " + id));
     }
 }

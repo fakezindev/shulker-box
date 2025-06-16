@@ -26,7 +26,7 @@ public class Category {
      * Este campo não pode ser nulo no banco de dados.
      */
 
-    @Column(nullable = false) // Define que a coluna no banco de dados não pode ser nula.
+    @Column(nullable = false, unique = true) // Define que a coluna no banco de dados não pode ser nula.
     private String name;
 
 }

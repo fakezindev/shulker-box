@@ -3,11 +3,16 @@ package com.shulkerbox.controller;
 
 import com.shulkerbox.model.Category;
 import com.shulkerbox.service.CategoryService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador REST para operações relacionadas a categorias.
@@ -54,6 +59,35 @@ public class CategoryController {
     public ResponseEntity<Category> save(@RequestBody Category category) {
         Category savedCategory = categoryService.save(category); // Salva via serviço
         return ResponseEntity.ok(savedCategory); // Retorna a categoria salva
+    }
+
+    @PutMapping("/{id}") // <-- ESTA É A ANOTAÇÃO ESSENCIAL PARA O ERRO 405
+    public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+        try {
+            // A validação de nome para atualização também
+            if (category.getName() == null || category.getName().trim().isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O nome da categoria não pode ser vazio.");
+            }
+
+            Category updatedCategory = categoryService.update(id, category);
+            return ResponseEntity.ok(updatedCategory); // 200 OK
+
+        } catch (EntityNotFoundException e) {
+            // Captura se a categoria a ser atualizada não foi encontrada
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(Map.of(
+                            "error", e.getReason(),
+                            "timestamp", LocalDateTime.now()
+                    ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "error", "Erro interno ao atualizar categoria: " + e.getMessage(),
+                            "timestamp", LocalDateTime.now()
+                    ));
+        }
     }
 
     /**
